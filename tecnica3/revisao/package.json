@@ -1,0 +1,21 @@
+{
+  "name": "revisao",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "index": "ts-node ./src/index.js",
+    "um": "ts-node ./src/um.js",
+    "dois": "ts-node ./src/dois.js",
+    "tres": "ts-node ./src/tres.js",
+    "quatro": "ts-node ./src/quatro.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.2"
+  }
+}
