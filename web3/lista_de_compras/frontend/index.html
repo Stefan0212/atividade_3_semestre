@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Compras</title>
+    <!-- Incluindo Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .fade-in { animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .loader { border-top-color: #3498db; animation: spin 1s ease-in-out infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+
+    <main class="bg-white p-6 sm:p-8 rounded-xl shadow-lg w-full max-w-2xl mx-4">
+        
+        <header class="mb-6">
+            <h1 class="text-3xl font-bold text-gray-800">Lista de Compras</h1>
+            <p class="text-gray-500 mt-1">Adicione, edite e remova produtos da sua lista.</p>
+        </header>
+
+        <!-- Formulário para Adicionar Produto -->
+        <form id="add-form" class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+            <input type="text" id="product-name" placeholder="Nome do produto" class="col-span-1 sm:col-span-1 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 transition" required>
+            <input type="number" id="product-price" placeholder="Valor do produto" step="0.01" min="0" class="col-span-1 sm:col-span-1 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 transition" required>
+            <button type="submit" class="col-span-1 sm:col-span-1 bg-blue-600 text-white font-semibold p-3 rounded-lg hover:bg-blue-700 transition-colors shadow-sm">
+                Adicionar Produto
+            </button>
+        </form>
+
+        <!-- Container da Lista de Produtos -->
+        <div id="loader-container" class="flex justify-center py-8">
+            <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12"></div>
+        </div>
+        <div id="shopping-list" class="space-y-3"></div>
+        <p id="empty-message" class="text-center text-gray-500 py-8 hidden">Sua lista de compras está vazia.</p>
+
+    </main>
+
+    <!-- Modal para Edição -->
+    <div id="edit-modal" class="fixed inset-0 bg-gray-900 bg-opacity-60 flex items-center justify-center hidden z-50">
+        <div class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md mx-4 fade-in">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">Editar Produto</h2>
+            <form id="edit-form">
+                <input type="hidden" id="edit-product-id">
+                <div class="mb-4">
+                    <label for="edit-product-name" class="block text-sm font-medium text-gray-700 mb-1">Nome do produto</label>
+                    <input type="text" id="edit-product-name" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" required>
+                </div>
+                <div class="mb-6">
+                    <label for="edit-product-price" class="block text-sm font-medium text-gray-700 mb-1">Valor do produto</label>
+                    <input type="number" id="edit-product-price" step="0.01" min="0" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" required>
+                </div>
+                <div class="flex justify-end space-x-4">
+                    <button type="button" id="cancel-edit" class="bg-gray-200 text-gray-800 font-semibold py-2 px-5 rounded-lg hover:bg-gray-300 transition-colors">Cancelar</button>
+                    <button type="submit" class="bg-blue-600 text-white font-semibold py-2 px-5 rounded-lg hover:bg-green-700 transition-colors">Salvar Alterações</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const API_URL = 'http://localhost:5000/api/shopping';
+            const addForm = document.getElementById('add-form');
+            const productNameInput = document.getElementById('product-name');
+            const productPriceInput = document.getElementById('product-price');
+            const shoppingListContainer = document.getElementById('shopping-list');
+            const loader = document.getElementById('loader-container');
+            const emptyMessage = document.getElementById('empty-message');
+            const editModal = document.getElementById('edit-modal');
+            const editForm = document.getElementById('edit-form');
+            const editProductId = document.getElementById('edit-product-id');
+            const editProductName = document.getElementById('edit-product-name');
+            const editProductPrice = document.getElementById('edit-product-price');
+            const cancelEditBtn = document.getElementById('cancel-edit');
+
+            const fetchItems = async () => {
+                try {
+                    loader.style.display = 'flex';
+                    shoppingListContainer.innerHTML = '';
+                    emptyMessage.classList.add('hidden');
+                    const response = await fetch(API_URL);
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    const items = await response.json();
+                    renderItems(items);
+                } catch (error) {
+                    console.error('Falha ao buscar itens:', error);
+                    shoppingListContainer.innerHTML = `<p class="text-center text-red-500">Não foi possível carregar a lista.</p>`;
+                } finally {
+                    loader.style.display = 'none';
+                }
+            };
+
+            const renderItems = (items) => {
+                shoppingListContainer.innerHTML = '';
+                if (items.length === 0) {
+                    emptyMessage.classList.remove('hidden');
+                } else {
+                    items.forEach(item => {
+                        const itemElement = document.createElement('div');
+                        itemElement.className = 'flex items-center justify-between bg-gray-50 p-4 rounded-lg border';
+                        itemElement.innerHTML = `
+                            <div>
+                                <p class="font-semibold text-gray-800">${item.name}</p>
+                                <p class="text-sm text-gray-600">R$ ${Number(item.price).toFixed(2).replace('.', ',')}</p>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button data-id="${item._id}" data-name="${item.name}" data-price="${item.price}" class="edit-btn p-2 text-gray-500 hover:text-blue-600">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z" /></svg>
+                                </button>
+                                <button data-id="${item._id}" class="delete-btn p-2 text-gray-500 hover:text-red-600">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                </button>
+                            </div>`;
+                        shoppingListContainer.appendChild(itemElement);
+                    });
+                }
+            };
+
+            const openEditModal = (id, name, price) => {
+                editProductId.value = id;
+                editProductName.value = name;
+                editProductPrice.value = price;
+                editModal.classList.remove('hidden');
+            };
+
+            const closeEditModal = () => editModal.classList.add('hidden');
+
+            addForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const name = productNameInput.value.trim();
+                const price = parseFloat(productPriceInput.value);
+                if (!name || isNaN(price)) return;
+                try {
+                    await fetch(API_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ name, price }),
+                    });
+                    addForm.reset();
+                    await fetchItems();
+                } catch (error) { console.error('Falha ao adicionar item:', error); }
+            });
+
+            shoppingListContainer.addEventListener('click', async (e) => {
+                const editButton = e.target.closest('.edit-btn');
+                if (editButton) {
+                    const { id, name, price } = editButton.dataset;
+                    openEditModal(id, name, price);
+                }
+                const deleteButton = e.target.closest('.delete-btn');
+                if (deleteButton) {
+                    if (!confirm('Tem certeza?')) return;
+                    try {
+                        await fetch(`${API_URL}/${deleteButton.dataset.id}`, { method: 'DELETE' });
+                        await fetchItems();
+                    } catch (error) { console.error('Falha ao deletar item:', error); }
+                }
+            });
+
+            editForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const id = editProductId.value;
+                const name = editProductName.value.trim();
+                const price = parseFloat(editProductPrice.value);
+                if (!id || !name || isNaN(price)) return;
+                try {
+                    await fetch(`${API_URL}/${id}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ name, price }),
+                    });
+                    closeEditModal();
+                    await fetchItems();
+                } catch (error) { console.error('Falha ao atualizar item:', error); }
+            });
+
+            cancelEditBtn.addEventListener('click', closeEditModal);
+            editModal.addEventListener('click', (e) => { if (e.target === editModal) closeEditModal(); });
+
+            fetchItems();
+        });
+    </script>
+
+</body>
+</html>
+
