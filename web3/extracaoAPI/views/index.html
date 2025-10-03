@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🕷️ Conversor Spider-Verse</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Bangers&family=Roboto:wght@400;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a0a2e 50%, #0f0519 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Animação de teia de aranha no fundo */
+        .web-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.03;
+            background-image: 
+                repeating-linear-gradient(0deg, transparent, transparent 50px, rgba(255, 255, 255, 0.1) 50px, rgba(255, 255, 255, 0.1) 51px),
+                repeating-linear-gradient(90deg, transparent, transparent 50px, rgba(255, 255, 255, 0.1) 50px, rgba(255, 255, 255, 0.1) 51px);
+            pointer-events: none;
+            animation: webMove 20s linear infinite;
+        }
+
+        @keyframes webMove {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(50px, 50px) rotate(360deg); }
+        }
+
+        /* Partículas flutuantes */
+        .particle {
+            position: fixed;
+            width: 3px;
+            height: 3px;
+            background: #ff0844;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: float 15s infinite;
+            box-shadow: 0 0 10px #ff0844;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) translateX(0); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) translateX(100px); opacity: 0; }
+        }
+
+        .container {
+            background: linear-gradient(145deg, rgba(20, 20, 40, 0.95) 0%, rgba(10, 10, 30, 0.95) 100%);
+            border-radius: 30px;
+            box-shadow: 
+                0 20px 60px rgba(255, 8, 68, 0.4),
+                0 0 100px rgba(0, 174, 239, 0.2),
+                inset 0 0 50px rgba(255, 8, 68, 0.05);
+            padding: 40px;
+            max-width: 550px;
+            width: 100%;
+            border: 3px solid;
+            border-image: linear-gradient(135deg, #ff0844, #00aeef, #ffed00) 1;
+            position: relative;
+            z-index: 10;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Efeito de comic dots */
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: radial-gradient(circle, rgba(255, 8, 68, 0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+            border-radius: 30px;
+            pointer-events: none;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 35px;
+            position: relative;
+        }
+
+        .spider-logo {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 20px;
+            position: relative;
+            animation: spiderPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes spiderPulse {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.1) rotate(5deg); }
+        }
+
+        .spider-icon {
+            font-size: 80px;
+            filter: drop-shadow(0 0 20px #ff0844) drop-shadow(0 0 40px #00aeef);
+            animation: iconGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes iconGlow {
+            0%, 100% { filter: drop-shadow(0 0 20px #ff0844) drop-shadow(0 0 40px #00aeef); }
+            50% { filter: drop-shadow(0 0 40px #ff0844) drop-shadow(0 0 60px #00aeef); }
+        }
+
+        h1 {
+            font-family: 'Bangers', cursive;
+            color: #ffffff;
+            font-size: 42px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-shadow: 
+                3px 3px 0 #ff0844,
+                6px 6px 0 #00aeef,
+                9px 9px 0 #ffed00,
+                0 0 30px rgba(255, 8, 68, 0.5);
+            animation: titleGlitch 5s infinite;
+        }
+
+        @keyframes titleGlitch {
+            0%, 90%, 100% { transform: translate(0); }
+            92% { transform: translate(-2px, 2px); }
+            94% { transform: translate(2px, -2px); }
+            96% { transform: translate(-2px, -2px); }
+        }
+
+        .subtitle {
+            color: #00aeef;
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px #00aeef;
+        }
+
+        .comic-boom {
+            position: absolute;
+            top: -30px;
+            right: -30px;
+            font-family: 'Bangers', cursive;
+            font-size: 24px;
+            color: #ffed00;
+            transform: rotate(15deg);
+            text-shadow: 2px 2px 0 #ff0844;
+            animation: boom 1s ease-in-out infinite;
+        }
+
+        @keyframes boom {
+            0%, 100% { transform: rotate(15deg) scale(1); }
+            50% { transform: rotate(20deg) scale(1.1); }
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            color: #00aeef;
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 0 0 5px #00aeef;
+        }
+
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 16px 20px;
+            border: 3px solid #ff0844;
+            border-radius: 15px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: rgba(10, 10, 30, 0.8);
+            color: #ffffff;
+            font-weight: 600;
+            box-shadow: 
+                inset 0 2px 10px rgba(0, 0, 0, 0.5),
+                0 0 0 0 rgba(255, 8, 68, 0.5);
+        }
+
+        input[type="number"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #00aeef;
+            background: rgba(0, 174, 239, 0.1);
+            box-shadow: 
+                inset 0 2px 10px rgba(0, 0, 0, 0.5),
+                0 0 20px rgba(0, 174, 239, 0.6),
+                0 0 40px rgba(255, 8, 68, 0.3);
+            transform: translateY(-2px);
+        }
+
+        input[type="number"]::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        select option {
+            background: #0a0a1e;
+            color: #ffffff;
+            padding: 10px;
+        }
+
+        .currency-row {
+            display: flex;
+            gap: 15px;
+            align-items: flex-end;
+        }
+
+        .currency-row .form-group {
+            flex: 1;
+        }
+
+        .swap-button {
+            background: linear-gradient(135deg, #ff0844 0%, #ff6b9d 100%);
+            border: 3px solid #ffed00;
+            border-radius: 50%;
+            width: 55px;
+            height: 55px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 24px;
+            margin-bottom: 25px;
+            color: white;
+            font-weight: bold;
+            box-shadow: 
+                0 5px 15px rgba(255, 8, 68, 0.5),
+                inset 0 -2px 5px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        .swap-button::before {
+            content: '🕸️';
+            position: absolute;
+            font-size: 12px;
+            top: -5px;
+            right: -5px;
+            animation: webSpin 3s linear infinite;
+        }
+
+        @keyframes webSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .swap-button:hover {
+            background: linear-gradient(135deg, #00aeef 0%, #00d4ff 100%);
+            border-color: #ff0844;
+            transform: rotate(180deg) scale(1.1);
+            box-shadow: 
+                0 8px 25px rgba(0, 174, 239, 0.7),
+                0 0 40px rgba(255, 8, 68, 0.5);
+        }
+
+        button[type="submit"] {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #ff0844 0%, #ff6b9d 50%, #00aeef 100%);
+            color: white;
+            border: 3px solid #ffed00;
+            border-radius: 15px;
+            font-size: 18px;
+            font-weight: 900;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-family: 'Bangers', cursive;
+            box-shadow: 
+                0 8px 20px rgba(255, 8, 68, 0.5),
+                inset 0 -3px 0 rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        button[type="submit"]::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        button[type="submit"]:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        button[type="submit"]:hover {
+            transform: translateY(-3px);
+            box-shadow: 
+                0 12px 30px rgba(255, 8, 68, 0.7),
+                0 0 50px rgba(0, 174, 239, 0.5),
+                inset 0 -3px 0 rgba(0, 0, 0, 0.3);
+            border-color: #ff0844;
+        }
+
+        button[type="submit"]:active {
+            transform: translateY(0);
+        }
+
+        #result {
+            margin-top: 30px;
+            padding: 25px;
+            background: linear-gradient(135deg, rgba(255, 8, 68, 0.2) 0%, rgba(0, 174, 239, 0.2) 100%);
+            border-radius: 15px;
+            text-align: center;
+            font-size: 22px;
+            font-weight: 900;
+            color: #ffffff;
+            min-height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 3px solid #ffed00;
+            box-shadow: 
+                0 5px 20px rgba(255, 8, 68, 0.3),
+                inset 0 0 20px rgba(0, 174, 239, 0.2);
+            font-family: 'Bangers', cursive;
+            letter-spacing: 1px;
+            text-shadow: 2px 2px 0 #ff0844;
+            animation: resultPop 0.5s ease-out;
+        }
+
+        @keyframes resultPop {
+            0% { transform: scale(0.8); opacity: 0; }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        #result:empty {
+            display: none;
+        }
+
+        #result::before {
+            content: '🕷️';
+            margin-right: 10px;
+            font-size: 28px;
+            animation: spiderSwing 2s ease-in-out infinite;
+        }
+
+        @keyframes spiderSwing {
+            0%, 100% { transform: rotate(-10deg); }
+            50% { transform: rotate(10deg); }
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid rgba(255, 8, 68, 0.3);
+            color: #00aeef;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-shadow: 0 0 5px #00aeef;
+        }
+
+        /* Efeito de raio no container */
+        .lightning {
+            position: absolute;
+            width: 2px;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent, #ffed00, transparent);
+            box-shadow: 0 0 10px #ffed00;
+            animation: lightning 4s linear infinite;
+            opacity: 0;
+        }
+
+        .lightning:nth-child(1) { left: 20%; animation-delay: 0s; }
+        .lightning:nth-child(2) { left: 50%; animation-delay: 1s; }
+        .lightning:nth-child(3) { left: 80%; animation-delay: 2s; }
+
+        @keyframes lightning {
+            0%, 90%, 100% { opacity: 0; }
+            92%, 98% { opacity: 1; }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 25px;
+            }
+
+            h1 {
+                font-size: 32px;
+            }
+
+            .currency-row {
+                flex-direction: column;
+            }
+
+            .swap-button {
+                transform: rotate(90deg);
+                margin: 15px auto;
+            }
+
+            .swap-button:hover {
+                transform: rotate(270deg) scale(1.1);
+            }
+
+            .comic-boom {
+                top: -20px;
+                right: -20px;
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="web-bg"></div>
+    
+    <!-- Partículas -->
+    <div class="particle" style="left: 10%; animation-delay: 0s;"></div>
+    <div class="particle" style="left: 30%; animation-delay: 2s;"></div>
+    <div class="particle" style="left: 50%; animation-delay: 4s;"></div>
+    <div class="particle" style="left: 70%; animation-delay: 6s;"></div>
+    <div class="particle" style="left: 90%; animation-delay: 8s;"></div>
+
+    <div class="container">
+        <div class="lightning"></div>
+        <div class="lightning"></div>
+        <div class="lightning"></div>
+        
+        <div class="comic-boom">POW!</div>
+        
+        <div class="header">
+            <div class="spider-logo">
+                <div class="spider-icon">🕷️</div>
+            </div>
+            <h1>Spider-Verse</h1>
+            <p class="subtitle">💰 Conversor Multiversal 💰</p>
+        </div>
+
+        <form id="converterForm">
+            <div class="form-group">
+                <label for="amount">💵 Valor</label>
+                <input type="number" step="0.01" name="amount" id="amount" placeholder="Digite o valor" required />
+            </div>
+
+            <div class="currency-row">
+                <div class="form-group">
+                    <label for="from">🌍 De</label>
+                    <select name="from" id="from" required>
+                        <option value="USD">USD - Dólar Americano</option>
+                        <option value="EUR">EUR - Euro</option>
+                        <option value="BRL" selected>BRL - Real Brasileiro</option>
+                        <option value="GBP">GBP - Libra Esterlina</option>
+                        <option value="JPY">JPY - Iene Japonês</option>
+                        <option value="CAD">CAD - Dólar Canadense</option>
+                        <option value="AUD">AUD - Dólar Australiano</option>
+                        <option value="CHF">CHF - Franco Suíço</option>
+                        <option value="CNY">CNY - Yuan Chinês</option>
+                    </select>
+                </div>
+
+                <div class="swap-button" onclick="swapCurrencies()" title="Trocar moedas">⇄</div>
+
+                <div class="form-group">
+                    <label for="to">🌎 Para</label>
+                    <select name="to" id="to" required>
+                        <option value="USD" selected>USD - Dólar Americano</option>
+                        <option value="EUR">EUR - Euro</option>
+                        <option value="BRL">BRL - Real Brasileiro</option>
+                        <option value="GBP">GBP - Libra Esterlina</option>
+                        <option value="JPY">JPY - Iene Japonês</option>
+                        <option value="CAD">CAD - Dólar Canadense</option>
+                        <option value="AUD">AUD - Dólar Australiano</option>
+                        <option value="CHF">CHF - Franco Suíço</option>
+                        <option value="CNY">CNY - Yuan Chinês</option>
+                    </select>
+                </div>
+            </div>
+
+            <button type="submit">🕸️ Converter Agora! 🕸️</button>
+        </form>
+
+        <div id="result"></div>
+
+        <div class="footer">
+            ⚡ POWERED BY EXCHANGERATE-API ⚡
+        </div>
+    </div>
+
+    <script>
+        // Criar mais partículas dinamicamente
+        function createParticles() {
+            for (let i = 0; i < 15; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 10 + 's';
+                particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                document.body.appendChild(particle);
+            }
+        }
+        createParticles();
+
+        function swapCurrencies() {
+            const fromSelect = document.getElementById('from');
+            const toSelect = document.getElementById('to');
+            const temp = fromSelect.value;
+            fromSelect.value = toSelect.value;
+            toSelect.value = temp;
+        }
+
+        document.getElementById("converterForm").addEventListener("submit", async function (e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const amount = formData.get("amount");
+            const from = formData.get("from");
+            const to = formData.get("to");
+
+            const resultDiv = document.getElementById("result");
+            resultDiv.textContent = "🕸️ Convertendo no multiverso...";
+            resultDiv.style.display = "flex";
+
+            try {
+                const response = await fetch(`/convert?amount=${amount}&from=${from}&to=${to}`);
+                const data = await response.json();
+                resultDiv.textContent = data.result || data.error;
+            } catch (error) {
+                resultDiv.textContent = "❌ Erro no multiverso! Tente novamente.";
+            }
+        });
+    </script>
+</body>
+</html>
